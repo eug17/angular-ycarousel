@@ -77,7 +77,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 							y_move = Math.abs(startMoveY - e.clientY);
 							x_move = Math.abs(startMoveX - e.clientX);
 							if (y_move > y_scroll_sensetivity || x_move < x_scroll_sensetivity) {
-								e.preventDefault();
+								return;
 							}
 							stackLenght = stackMove.push({
 								move: e.clientX,
@@ -101,7 +101,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 							y_move = Math.abs(startMoveY - e.changedTouches[0].clientY);
 							x_move = Math.abs(startMoveX - e.changedTouches[0].clientX);
 							if (y_move > y_scroll_sensetivity || x_move < x_scroll_sensetivity) {
-								e.preventDefault();
+								return;
 							}
 							stackLenght = stackMove.push({
 								move: e.changedTouches[0].clientX,
