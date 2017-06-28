@@ -158,7 +158,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 							}
 
 
-
+							startMove = false;
 						}
 						// stackMove.length = 0;
 						// stackLenght = 0;
@@ -204,7 +204,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 								el.style.transform = 'translateX(' + (startLeft) + 'px)';
 							}
 
-
+							startMove = false;
 
 						}
 						// stackMove.length = 0;
