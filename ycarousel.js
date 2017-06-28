@@ -72,7 +72,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 						x_move = 0;
 						// containerMove = e.changedTouches[0].clientX;
 						startLeft = parseFloat(el.style.transform.replace(/[^-0-9\.\d]/g, ''));
-						console.log('startLeft', startLeft);
+						// console.log('startLeft', startLeft);
 					});
 
 
@@ -179,7 +179,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 								}
 
 								if ((coord < y_scroll_sensetivity) && ((coord - containerMove) > scrollWidth)) {
-									console.log('stackMove', stackMove);
+									// console.log('stackMove', stackMove);
 									if ((stackMove[stackLenght - 1].move < stackMove[point].move) && ((startLeft - containerMove) >= max_dist)) {
 										el.style.transform = 'translateX(' + (startLeft - containerMove) + 'px)';
 										index++;
