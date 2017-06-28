@@ -41,7 +41,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
 					containerMove = parseFloat(element[0].clientWidth * coeficient);
 					$timeout(function() {
-						// scrollWidth = parseFloat(element[0].scrollWidth * -1);
 						length = element[0].firstElementChild.childElementCount;
 						scrollWidth = containerMove * length * -1;
 						max_dist = scrollWidth + containerMove - allowed_bounce;
@@ -59,7 +58,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 						y_move = 0;
 						x_move = 0;
 						startLeft = parseFloat(el.style.transform.replace(/[^-0-9\.\d]/g, ''));
-						// console.log('startLeft', startLeft);
 					});
 
 					element.bind('touchstart', function(e) {
@@ -70,9 +68,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 						startMoveY = e.changedTouches[0].clientY;
 						y_move = 0;
 						x_move = 0;
-						// containerMove = e.changedTouches[0].clientX;
 						startLeft = parseFloat(el.style.transform.replace(/[^-0-9\.\d]/g, ''));
-						// console.log('startLeft', startLeft);
 					});
 
 
@@ -156,12 +152,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 							} else {
 								el.style.transform = 'translateX(' + (startLeft) + 'px)';
 							}
-
-
 							startMove = false;
 						}
-						// stackMove.length = 0;
-						// stackLenght = 0;
 					});
 
 					element.bind('touchend', function(e) {
@@ -170,16 +162,13 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
 							var coord = startLeft - (startMoveX - e.changedTouches[0].clientX);
 							var point = Math.floor(stackLenght * 0.75);
-							// console.log('startLeft', startLeft);
 							if (y_move < y_scroll_sensetivity && x_move > x_scroll_sensetivity) {
-								// console.log('index', index);
 								compare_time = stackMove[stackLenght - 1].time - stackMove[point].time;
 								if (compare_time < 130) {
 									el.style.transitionDuration = '0.4s';
 								}
 
 								if ((coord < y_scroll_sensetivity) && ((coord - containerMove) > scrollWidth)) {
-									// console.log('stackMove', stackMove);
 									if ((stackMove[stackLenght - 1].move < stackMove[point].move) && ((startLeft - containerMove) >= max_dist)) {
 										el.style.transform = 'translateX(' + (startLeft - containerMove) + 'px)';
 										index++;
@@ -207,8 +196,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 							startMove = false;
 
 						}
-						// stackMove.length = 0;
-						// stackLenght = 0;
+
 					});
 
 					// unbind listeners
