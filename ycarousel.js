@@ -128,14 +128,14 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
 								var coord = startLeft - (startMoveX - e.clientX);
 								if ((coord < allowed_bounce) && ((coord - containerMove) > scrollWidth)) {
-									if ((stackMove[stackLenght - 1].move < stackMove[point].move) && ((startLeft - containerMove) >= max_dist)) {
+									if ((e.clientX < startMoveX) && ((startLeft - containerMove) >= max_dist)) {
 
 										el.style.transform = 'translateX(' + (startLeft - containerMove) + 'px)';
 										index++;
 										scope.afterChange({
 											'index': index
 										});
-									} else if (stackMove[stackLenght - 1].move > stackMove[point].move) {
+									} else if (e.clientX > startMoveX) {
 										el.style.transform = 'translateX(' + (startLeft + containerMove) + 'px)';
 										index--;
 										scope.afterChange({
@@ -169,13 +169,13 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 								}
 
 								if ((coord < y_scroll_sensetivity) && ((coord - containerMove) > scrollWidth)) {
-									if ((stackMove[stackLenght - 1].move < stackMove[point].move) && ((startLeft - containerMove) >= max_dist)) {
+									if ((e.changedTouches[0].clientX < startMoveX) && ((startLeft - containerMove) >= max_dist)) {
 										el.style.transform = 'translateX(' + (startLeft - containerMove) + 'px)';
 										index++;
 										scope.afterChange({
 											'index': index
 										});
-									} else if (stackMove[stackLenght - 1].move > stackMove[point].move) {
+									} else if (e.changedTouches[0].clientX > startMoveX) {
 										el.style.transform = 'translateX(' + (startLeft + containerMove) + 'px)';
 										index--;
 										scope.afterChange({
