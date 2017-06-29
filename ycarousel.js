@@ -29,21 +29,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					var el = element[0].firstElementChild;
 					el.style.transform = 'translateX(0px)';
 
-
-					if (attrs.ycarouselDataChange) {
-						scope.$watch('ycarouselDataChange', function(newValue, oldValue) {
-							if (oldValue != newValue) {
-								length = element[0].firstElementChild.childElementCount;
-								scrollWidth = containerMove * length * -1;
-								max_dist = scrollWidth + containerMove - allowed_bounce;
-								el.style.transform = 'translateX(0px)';
-								index = 0;
-							}
-						})
-					}
-
-
-
 					if (attrs.coeficient) {
 						coeficient = parseFloat(attrs.coeficient);
 					}
@@ -62,12 +47,27 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					containerMove = parseFloat(element[0].clientWidth * coeficient);
 					$timeout(function() {
 						length = element[0].firstElementChild.childElementCount;
+						// console.log('length', length);
 						scrollWidth = containerMove * length * -1;
 						max_dist = scrollWidth + containerMove - allowed_bounce;
 					});
 
+					if (attrs.ycarouselDataChange) {
+						scope.$watch('ycarouselDataChange', function(newValue, oldValue) {
+							if (oldValue != newValue) {
+								containerMove = parseFloat(element[0].clientWidth * coeficient);
+								el.style.transform = 'translateX(0px)';
+								index = 0;
+								$timeout(function() {
+									length = element[0].firstElementChild.childElementCount;
+									// console.log('length', length);
+									scrollWidth = containerMove * length * -1;
+									max_dist = scrollWidth + containerMove - allowed_bounce;
+								});
 
-
+							}
+						})
+					}
 
 					element.bind('mousedown', function(e) {
 						startMove = true;
@@ -89,7 +89,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 						y_move = 0;
 						x_move = 0;
 						startLeft = parseFloat(el.style.transform.replace(/[^-0-9\.\d]/g, ''));
-						console.log('startLeft', startLeft);
+						// console.log('startLeft', startLeft);
 					});
 
 
