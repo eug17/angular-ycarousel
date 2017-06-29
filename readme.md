@@ -4,6 +4,7 @@ Simple module to snap carousel for AngularJs
 
 Simple add ycarousel to the element and ycarousel-after-change as callback function,
 it will return active slide index after animation end;
+ycarousel-data-change - as trigger if changed amount containers
 
 # also can specify some params:
 

@@ -10,6 +10,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 				replace: true,
 				scope: {
 					afterChange: '=ycarouselAfterChange', // callback function
+					ycarouselDataChange: '='
 				},
 				link: function(scope, element, attrs) {
 					var containerMove, stackMove, stackLenght, scrollWidth, startLeft, compare_time, startMoveX, startMoveY, y_move, x_move, length, max_dist;
@@ -20,6 +21,18 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					var y_scroll_sensetivity = 50;
 					var x_scroll_sensetivity = 20;
 					var allowed_bounce = 50;
+
+					if (attrs.ycarouselDataChange) {
+						scope.$watch('ycarouselDataChange', function(newValue, oldValue) {
+							if (oldValue != newValue) {
+								length = element[0].firstElementChild.childElementCount;
+								scrollWidth = containerMove * length * -1;
+								max_dist = scrollWidth + containerMove - allowed_bounce;
+							}
+						})
+					}
+
+
 
 					if (attrs.coeficient) {
 						coeficient = parseFloat(attrs.coeficient);
@@ -39,6 +52,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
 					var el = element[0].firstElementChild;
 
+					console.log('element', element);
 					containerMove = parseFloat(element[0].clientWidth * coeficient);
 					$timeout(function() {
 						length = element[0].firstElementChild.childElementCount;
@@ -69,6 +83,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 						y_move = 0;
 						x_move = 0;
 						startLeft = parseFloat(el.style.transform.replace(/[^-0-9\.\d]/g, ''));
+						console.log('startLeft', startLeft);
 					});
 
 
@@ -100,9 +115,11 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
 							y_move = Math.abs(startMoveY - e.changedTouches[0].clientY);
 							x_move = Math.abs(startMoveX - e.changedTouches[0].clientX);
+
 							if (y_move > y_scroll_sensetivity || x_move < x_scroll_sensetivity) {
 								return;
 							}
+							console
 							stackLenght = stackMove.push({
 								move: e.changedTouches[0].clientX,
 								time: e.timeStamp
