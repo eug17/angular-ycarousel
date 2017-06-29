@@ -22,12 +22,22 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					var x_scroll_sensetivity = 20;
 					var allowed_bounce = 50;
 
+					// disable scroll
+					element[0].style.overflow = 'hidden';
+					element[0].style.position = 'relative';
+
+					var el = element[0].firstElementChild;
+					el.style.transform = 'translateX(0px)';
+
+
 					if (attrs.ycarouselDataChange) {
 						scope.$watch('ycarouselDataChange', function(newValue, oldValue) {
 							if (oldValue != newValue) {
 								length = element[0].firstElementChild.childElementCount;
 								scrollWidth = containerMove * length * -1;
 								max_dist = scrollWidth + containerMove - allowed_bounce;
+								el.style.transform = 'translateX(0px)';
+								index = 0;
 							}
 						})
 					}
@@ -46,11 +56,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					if (attrs.allowedBounce) {
 						allowed_bounce = parseFloat(attrs.allowedBounce);
 					}
-					// disable scroll
-					element[0].style.overflow = 'hidden';
-					element[0].style.position = 'relative';
 
-					var el = element[0].firstElementChild;
 
 					console.log('element', element);
 					containerMove = parseFloat(element[0].clientWidth * coeficient);
@@ -61,7 +67,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					});
 
 
-					el.style.transform = 'translateX(0px)';
+
 
 					element.bind('mousedown', function(e) {
 						startMove = true;
