@@ -13,14 +13,17 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					ycarouselDataChange: '='
 				},
 				link: function(scope, element, attrs) {
-					var containerMove, stackMove, stackLenght, scrollWidth, startLeft, compare_time, startMoveX, startMoveY, y_move, x_move, length, max_dist;
+					var containerMove, stackMove, stackLenght, scrollWidth, startLeft, compare_time, startMoveX, startMoveY, y_move, x_move, length, max_dist, watcher;
 					var startMove = false;
+					var preventX = false;
 					var index = 0;
 					// default values
 					var coeficient = 0.85;
-					var y_scroll_sensetivity = 50;
-					var x_scroll_sensetivity = 20;
+					var y_scroll_sensetivity = 10;
+					var x_scroll_sensetivity = 10;
 					var allowed_bounce = 50;
+
+
 
 					// disable scroll
 					element[0].style.overflow = 'hidden';
@@ -42,6 +45,16 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 						allowed_bounce = parseFloat(attrs.allowedBounce);
 					}
 
+					// var disableYScroll = function(){
+					//     el.children.each(function(layer){
+					//         if(layer.children.length){
+					//             layer.children.each(function(layer_1){
+					//                 if(layer_1.children.length)
+					//             })
+					//         }
+					//     })
+					// }
+
 
 					console.log('element', element);
 					containerMove = parseFloat(element[0].clientWidth * coeficient);
@@ -53,7 +66,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					});
 
 					if (attrs.ycarouselDataChange) {
-						scope.$watch('ycarouselDataChange', function(newValue, oldValue) {
+						watcher = scope.$watch('ycarouselDataChange', function(newValue, oldValue) {
 							if (oldValue != newValue) {
 								containerMove = parseFloat(element[0].clientWidth * coeficient);
 								el.style.transform = 'translateX(0px)';
@@ -67,10 +80,13 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
 							}
 						})
+
+						// console.log('watcher', watcher);
 					}
 
 					element.bind('mousedown', function(e) {
 						startMove = true;
+						preventX = false;
 						stackMove = [];
 						stackLenght = 0;
 						startMoveX = e.clientX;
@@ -82,6 +98,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
 					element.bind('touchstart', function(e) {
 						startMove = true;
+						preventX = false;
 						stackMove = [];
 						stackLenght = 0;
 						startMoveX = e.changedTouches[0].clientX;
@@ -97,11 +114,25 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 						if (startMove) {
 							y_move = Math.abs(startMoveY - e.clientY);
 							x_move = Math.abs(startMoveX - e.clientX);
-							if (y_move > y_scroll_sensetivity || x_move < x_scroll_sensetivity) {
+
+							// handle moved click event (M. case)
+							if (x_move < x_scroll_sensetivity) {
 								return;
 							}
+
+							if (y_move > x_move && !preventX) {
+								return;
+							} else {
+								preventX = true;
+								if (e.preventDefault) {
+									e.preventDefault();
+									e.returnValue = false;
+								}
+							}
+
 							stackLenght = stackMove.push({
-								move: e.clientX,
+								moveX: e.clientX,
+								moveY: e.clientY,
 								time: e.timeStamp
 							});
 
@@ -122,10 +153,20 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 							y_move = Math.abs(startMoveY - e.changedTouches[0].clientY);
 							x_move = Math.abs(startMoveX - e.changedTouches[0].clientX);
 
-							if (y_move > y_scroll_sensetivity || x_move < x_scroll_sensetivity) {
+							// handle moved click event (M. case)
+							if (x_move < x_scroll_sensetivity) {
 								return;
 							}
-							console
+
+							if (y_move > x_move && !preventX) {
+								return;
+							} else {
+								preventX = true;
+								if (e.preventDefault) {
+									e.preventDefault();
+									e.returnValue = false;
+								}
+							}
 							stackLenght = stackMove.push({
 								move: e.changedTouches[0].clientX,
 								time: e.timeStamp
@@ -141,14 +182,16 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
 					element.bind('mouseup', function(e) {
 						if (startMove) {
+							// el.style.pointerEvents = 'auto';
 							el.style.transitionDuration = '0.9s';
 							var point = Math.floor(stackLenght * 0.75);
-							if (y_move < y_scroll_sensetivity && x_move > x_scroll_sensetivity) {
-								compare_time = stackMove[stackLenght - 1].time - stackMove[point].time;
-								if (compare_time < 130) {
-									el.style.transitionDuration = '0.4s';
+							if (stackLenght && x_move > x_scroll_sensetivity) {
+								if (point > 2) {
+									compare_time = stackMove[stackLenght - 1].time - stackMove[point].time;
+									if (compare_time < 130) {
+										el.style.transitionDuration = '0.4s';
+									}
 								}
-
 								var coord = startLeft - (startMoveX - e.clientX);
 								if ((coord < allowed_bounce) && ((coord - containerMove) > scrollWidth)) {
 									if ((e.clientX < startMoveX) && ((startLeft - containerMove) >= max_dist)) {
@@ -181,14 +224,17 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
 					element.bind('touchend', function(e) {
 						if (startMove) {
+							// el.style.pointerEvents = 'auto';
 							el.style.transitionDuration = '0.9s';
 
 							var coord = startLeft - (startMoveX - e.changedTouches[0].clientX);
 							var point = Math.floor(stackLenght * 0.75);
-							if (y_move < y_scroll_sensetivity && x_move > x_scroll_sensetivity) {
-								compare_time = stackMove[stackLenght - 1].time - stackMove[point].time;
-								if (compare_time < 130) {
-									el.style.transitionDuration = '0.4s';
+							if (stackLenght && x_move > x_scroll_sensetivity) {
+								if (point > 2) {
+									compare_time = stackMove[stackLenght - 1].time - stackMove[point].time;
+									if (compare_time < 130) {
+										el.style.transitionDuration = '0.4s';
+									}
 								}
 
 								if ((coord < y_scroll_sensetivity) && ((coord - containerMove) > scrollWidth)) {
@@ -215,7 +261,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 							} else {
 								el.style.transform = 'translateX(' + (startLeft) + 'px)';
 							}
-
 							startMove = false;
 
 						}
@@ -224,6 +269,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
 					// unbind listeners
 					element.on('$destroy', function() {
+						if (typeof watcher == 'function') {
+							watcher();
+						}
 						element.unbind("mousedown");
 						element.unbind("mousemove");
 						element.unbind("mouseup");
