@@ -16,6 +16,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					var containerMove, stackMove, stackLenght, scrollWidth, startLeft, compare_time, startMoveX, startMoveY, y_move, x_move, length, max_dist, watcher;
 					var startMove = false;
 					var preventX = false;
+					var prevented = false;
 					var index = 0;
 					// default values
 					var coeficient = 0.85;
@@ -44,16 +45,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					if (attrs.allowedBounce) {
 						allowed_bounce = parseFloat(attrs.allowedBounce);
 					}
-
-					// var disableYScroll = function(){
-					//     el.children.each(function(layer){
-					//         if(layer.children.length){
-					//             layer.children.each(function(layer_1){
-					//                 if(layer_1.children.length)
-					//             })
-					//         }
-					//     })
-					// }
 
 
 					console.log('element', element);
@@ -87,6 +78,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					element.bind('mousedown', function(e) {
 						startMove = true;
 						preventX = false;
+						prevented = false;
 						stackMove = [];
 						stackLenght = 0;
 						startMoveX = e.clientX;
@@ -99,6 +91,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					element.bind('touchstart', function(e) {
 						startMove = true;
 						preventX = false;
+						prevented = false;
 						stackMove = [];
 						stackLenght = 0;
 						startMoveX = e.changedTouches[0].clientX;
@@ -106,7 +99,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 						y_move = 0;
 						x_move = 0;
 						startLeft = parseFloat(el.style.transform.replace(/[^-0-9\.\d]/g, ''));
-						// console.log('startLeft', startLeft);
 					});
 
 
@@ -120,12 +112,20 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 								return;
 							}
 
-							if (y_move > x_move && !preventX) {
+							if ((y_move > x_move && !preventX) || (stackLenght && preventX)) {
+								// console.log('here');
+								stackLenght = 0;
+								stackMove.length = 0;
 								return;
 							} else {
 								preventX = true;
+								// console.log('there');
+								// console.log('e.returnValue', e.returnValue);
 								if (e.preventDefault) {
+									// console.log('there 2');
+									preventX = false;
 									e.preventDefault();
+									e.stopImmediatePropagation();
 									e.returnValue = false;
 								}
 							}
@@ -158,15 +158,25 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 								return;
 							}
 
-							if (y_move > x_move && !preventX) {
+							if ((y_move > x_move && !preventX) || (stackLenght && preventX)) {
+								// console.log('here');
+								stackLenght = 0;
+								stackMove.length = 0;
 								return;
 							} else {
 								preventX = true;
+								// console.log('there');
+								// console.log('e.returnValue', e.returnValue);
 								if (e.preventDefault) {
+									// console.log('there 2');
+									preventX = false;
 									e.preventDefault();
+									e.stopImmediatePropagation();
 									e.returnValue = false;
 								}
 							}
+
+
 							stackLenght = stackMove.push({
 								move: e.changedTouches[0].clientX,
 								time: e.timeStamp
@@ -215,15 +225,21 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 								} else if ((coord + containerMove) < scrollWidth) {
 									el.style.transform = 'translateX(' + (startLeft) + 'px)';
 								}
+								$('.panel-items').css({
+									'overflow-y': 'hidden'
+								});
 							} else {
 								el.style.transform = 'translateX(' + (startLeft) + 'px)';
 							}
 							startMove = false;
+							$('.panel-items').css({
+								'overflow-y': 'auto'
+							});
 						}
 					});
 
 					element.bind('touchend', function(e) {
-						if (startMove) {
+						if (startMove && !preventX) {
 							// el.style.pointerEvents = 'auto';
 							el.style.transitionDuration = '0.9s';
 
