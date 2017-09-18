@@ -10,6 +10,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 				replace: true,
 				scope: {
 					afterChange: '=ycarouselAfterChange', // callback function
+					atEnd: '=ycarouselAtEnd', // callback function
 					ycarouselDataChange: '='
 				},
 				link: function(scope, element, attrs) {
@@ -273,6 +274,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 									el.style.transform = 'translateX(0px)';
 								} else if ((coord + containerMove) > scrollWidth) {
 									el.style.transform = 'translateX(' + (startLeft) + 'px)';
+									if(scope.atEnd)
+										scope.atEnd();
 								}
 							} else {
 								el.style.transform = 'translateX(' + (startLeft) + 'px)';
